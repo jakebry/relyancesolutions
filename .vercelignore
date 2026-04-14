@@ -1,0 +1,21 @@
+# local dev + build
+node_modules
+.next
+out
+build
+dist
+
+# env
+.env*
+
+# docs + design artifacts (not needed at runtime)
+docs
+.playwright-mcp
+.claude
+
+# os
+.DS_Store
+
+# ide
+.vscode
+.idea
