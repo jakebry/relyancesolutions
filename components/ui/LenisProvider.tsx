@@ -16,8 +16,9 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
     ).matches;
 
     const lenis = new Lenis({
-      lerp: prefersReduced ? 1 : 0.12,
-      wheelMultiplier: 1.0,
+      lerp: prefersReduced ? 1 : 0.16,
+      duration: 0.9,
+      wheelMultiplier: 1.05,
       smoothWheel: !prefersReduced,
       syncTouch: false,
     });

@@ -124,7 +124,7 @@ export function Contact() {
           transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="relative mt-12"
         >
-          <div className="relative rounded-2xl border border-cyan-glow/20 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-8 backdrop-blur-sm md:p-12">
+          <div className="relative rounded-2xl border border-cyan-glow/20 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-8 md:p-12">
             <div
               aria-hidden
               className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-glow/70 to-transparent"

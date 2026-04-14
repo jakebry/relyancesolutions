@@ -59,7 +59,7 @@ export function Services() {
                       <Icon className="h-5 w-5" />
                     </div>
                     <span className="mono text-[10px] text-slate-muted">
-                      0{i + 1 > 9 ? "" : ""}{(i + 1).toString().padStart(2, "0")}
+                      {(i + 1).toString().padStart(2, "0")}
                     </span>
                   </div>
                   <div className="relative z-10 mt-8 flex-1">

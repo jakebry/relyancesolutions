@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { useRef } from "react";
 
@@ -14,10 +14,12 @@ export function GlassCard({ children, className, tilt = true }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0.5);
   const my = useMotionValue(0.5);
-  const rotX = useTransform(my, [0, 1], [6, -6]);
-  const rotY = useTransform(mx, [0, 1], [-6, 6]);
-  const spotX = useTransform(mx, (v) => `${v * 100}%`);
-  const spotY = useTransform(my, (v) => `${v * 100}%`);
+  const sx = useSpring(mx, { stiffness: 220, damping: 22 });
+  const sy = useSpring(my, { stiffness: 220, damping: 22 });
+  const rotX = useTransform(sy, [0, 1], [5, -5]);
+  const rotY = useTransform(sx, [0, 1], [-5, 5]);
+  const spotX = useTransform(sx, (v) => `${v * 100}%`);
+  const spotY = useTransform(sy, (v) => `${v * 100}%`);
 
   function onMove(e: React.MouseEvent) {
     if (!tilt) return;
@@ -37,17 +39,29 @@ export function GlassCard({ children, className, tilt = true }: Props) {
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      style={tilt ? { rotateX: rotX, rotateY: rotY, transformPerspective: 1000 } : undefined}
+      style={
+        tilt
+          ? {
+              rotateX: rotX,
+              rotateY: rotY,
+              transformPerspective: 1000,
+              // @ts-expect-error css var driven by motion value
+              "--spot-x": spotX,
+              "--spot-y": spotY,
+            }
+          : undefined
+      }
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-cyan-glow/15 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-sm transition-colors hover:border-cyan-glow/40",
+        "group relative overflow-hidden rounded-2xl border border-cyan-glow/15 bg-gradient-to-b from-white/[0.04] to-white/[0.01] transition-colors hover:border-cyan-glow/40",
         className
       )}
     >
-      <motion.div
+      <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
         style={{
-          background: `radial-gradient(600px circle at ${spotX.get()} ${spotY.get()}, rgba(79, 195, 255, 0.18), transparent 40%)`,
+          background:
+            "radial-gradient(520px circle at var(--spot-x,50%) var(--spot-y,50%), rgba(79,195,255,0.18), transparent 40%)",
         }}
       />
       <div
