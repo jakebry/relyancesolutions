@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { processSteps } from "@/lib/process";
 import { SectionLabel } from "../ui/SectionLabel";
+import { TextReveal } from "../ui/TextReveal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -12,41 +13,62 @@ if (typeof window !== "undefined") {
 
 export function Process() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const wrapper = wrapperRef.current;
-    const track = trackRef.current;
-    if (!wrapper || !track) return;
+    const grid = gridRef.current;
+    const progress = progressRef.current;
+    if (!wrapper || !grid || !progress) return;
+
+    const cards = Array.from(
+      grid.querySelectorAll<HTMLDivElement>("[data-step]")
+    );
 
     const mq = window.matchMedia("(min-width: 768px)");
-    let trigger: ScrollTrigger | undefined;
+    let ctx: gsap.Context | undefined;
 
     function create() {
-      const distance = track!.scrollWidth - window.innerWidth;
-      if (distance <= 0) return;
+      ctx = gsap.context(() => {
+        gsap.set(cards, { opacity: 0, y: 60, filter: "blur(8px)" });
+        gsap.set(progress, { scaleX: 0, transformOrigin: "left" });
 
-      const tween = gsap.to(track, {
-        x: -distance,
-        ease: "none",
-      });
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: wrapper,
+            start: "top top",
+            end: "+=650",
+            pin: true,
+            scrub: 0.6,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
 
-      trigger = ScrollTrigger.create({
-        animation: tween,
-        trigger: wrapper,
-        start: "top top",
-        end: () => `+=${distance}`,
-        pin: true,
-        scrub: 1,
-        invalidateOnRefresh: true,
-        anticipatePin: 1,
-      });
+        tl.to(progress, { scaleX: 1, duration: 1, ease: "none" }, 0);
+
+        cards.forEach((card, i) => {
+          tl.to(
+            card,
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.4,
+              ease: "power2.out",
+            },
+            i * 0.22
+          );
+        });
+      }, wrapper ?? undefined);
     }
 
     function destroy() {
-      trigger?.kill();
-      trigger = undefined;
-      gsap.set(track, { clearProps: "all" });
+      ctx?.revert();
+      ctx = undefined;
+      gsap.set(cards, { clearProps: "all" });
+      gsap.set(progress, { clearProps: "all" });
     }
 
     if (mq.matches) create();
@@ -56,13 +78,8 @@ export function Process() {
       if (e.matches) create();
     };
     mq.addEventListener("change", onChange);
-
-    const onResize = () => ScrollTrigger.refresh();
-    window.addEventListener("resize", onResize);
-
     return () => {
       mq.removeEventListener("change", onChange);
-      window.removeEventListener("resize", onResize);
       destroy();
     };
   }, []);
@@ -70,39 +87,45 @@ export function Process() {
   return (
     <section
       id="process"
-      className="relative overflow-hidden bg-surface py-32 md:py-0"
+      className="relative overflow-hidden bg-surface"
     >
-      <div aria-hidden className="absolute inset-0 bg-grid-sm opacity-[0.06]" />
+      <div aria-hidden className="absolute inset-0 bg-grid-sm opacity-[0.05]" />
 
       <div
         ref={wrapperRef}
-        className="relative md:h-screen md:min-h-[720px]"
+        className="relative py-24 md:flex md:h-screen md:min-h-[720px] md:flex-col md:justify-center md:py-0"
       >
-        <div className="relative mx-auto max-w-7xl px-6 pt-10 md:px-10 md:pt-24">
-          <SectionLabel number="02" label="Process" />
-          <h2 className="display mt-8 max-w-3xl text-balance text-5xl font-semibold leading-[0.95] tracking-tight text-platinum md:text-7xl">
-            Four steps. Zero surprises.
-          </h2>
-          <p className="mt-6 max-w-lg text-slate-muted">
-            From first call to fully-managed site. We take the wheel, you take the credit.
-          </p>
-        </div>
+        <div className="relative mx-auto w-full max-w-7xl px-6 md:px-10">
+          <div className="flex flex-col items-start gap-8 md:flex-row md:items-end md:justify-between">
+            <div>
+              <SectionLabel number="02" label="Process" />
+              <TextReveal
+                as="h2"
+                text="Four steps. Zero surprises."
+                className="display mt-8 max-w-3xl text-balance text-4xl font-semibold leading-[0.95] tracking-tight text-platinum md:text-6xl lg:text-7xl"
+              />
+            </div>
+            <p className="max-w-sm text-pretty text-slate-muted">
+              From first call to fully-managed site. We take the wheel, you take the credit.
+            </p>
+          </div>
 
-        <div className="relative mt-12 md:mt-20 md:overflow-hidden">
+          <div className="relative mt-14 h-px w-full overflow-hidden bg-cyan-glow/15 md:mt-16">
+            <div
+              ref={progressRef}
+              className="h-full w-full origin-left bg-gradient-to-r from-cyan-glow via-blue-deep to-cyan-glow shadow-[0_0_16px_rgba(79,195,255,0.6)]"
+            />
+          </div>
+
           <div
-            ref={trackRef}
-            className="flex flex-col gap-6 px-6 md:flex-row md:gap-0 md:px-0 md:pl-[8vw] md:pr-[8vw] md:w-max md:will-change-transform"
+            ref={gridRef}
+            className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 md:mt-14 md:grid-cols-4 md:gap-4"
           >
             {processSteps.map((step, i) => (
               <ProcessCard key={step.number} step={step} index={i} />
             ))}
           </div>
         </div>
-
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-void"
-        />
       </div>
     </section>
   );
@@ -115,52 +138,48 @@ function ProcessCard({
   step: (typeof processSteps)[number];
   index: number;
 }) {
-  const isLast = index === processSteps.length - 1;
   return (
-    <div className="relative md:mr-8 md:w-[min(42rem,80vw)] md:shrink-0">
-      <div className="relative overflow-hidden rounded-2xl border border-cyan-glow/15 bg-gradient-to-br from-white/[0.04] to-transparent p-8 md:min-h-[30rem] md:p-12">
-        <div className="flex items-start justify-between gap-6">
-          <span className="display text-[6rem] font-semibold leading-none tracking-tight text-cyan-glow/90 md:text-[9rem]">
-            {step.number}
-          </span>
-          <span className="mono mt-4 text-[10px] text-slate-muted">
-            Step {index + 1} of {processSteps.length}
-          </span>
-        </div>
+    <div
+      data-step
+      className="group relative flex flex-col rounded-2xl border border-cyan-glow/15 bg-gradient-to-br from-white/[0.04] to-transparent p-6 transition-colors hover:border-cyan-glow/40 md:p-7"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-glow/60 to-transparent opacity-70"
+      />
 
-        <h3 className="display mt-6 text-3xl font-semibold tracking-tight text-platinum md:text-5xl">
-          {step.title}
-        </h3>
-        <p className="mt-4 max-w-md text-slate-muted md:text-lg">
-          {step.description}
-        </p>
-
-        <ul className="mt-8 space-y-3">
-          {step.details.map((d) => (
-            <li
-              key={d}
-              className="flex items-start gap-3 text-sm text-slate-muted"
-            >
-              <span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-glow shadow-[0_0_8px_rgba(79,195,255,0.8)]" />
-              {d}
-            </li>
-          ))}
-        </ul>
-
-        <div
-          aria-hidden
-          className="absolute -right-20 -bottom-20 h-64 w-64 rounded-full bg-cyan-glow/10 blur-[80px]"
-        />
+      <div className="flex items-baseline justify-between">
+        <span className="display text-5xl font-semibold leading-none tracking-tight text-cyan-glow/90 md:text-6xl">
+          {step.number}
+        </span>
+        <span className="mono text-[10px] text-slate-muted">
+          {index + 1} / {4}
+        </span>
       </div>
 
-      {!isLast && (
-        <div
-          aria-hidden
-          className="hidden md:absolute md:top-1/2 md:-right-8 md:flex md:h-px md:w-16 md:-translate-y-1/2 md:items-center md:bg-cyan-glow/40"
-        >
-          <div className="ml-auto h-2 w-2 rotate-45 border-t border-r border-cyan-glow" />
-        </div>
-      )}
+      <h3 className="display mt-6 text-xl font-semibold leading-tight tracking-tight text-platinum md:text-2xl">
+        {step.title}
+      </h3>
+      <p className="mt-3 text-sm leading-relaxed text-slate-muted">
+        {step.description}
+      </p>
+
+      <ul className="mt-6 space-y-2.5 border-t border-cyan-glow/10 pt-5">
+        {step.details.map((d) => (
+          <li
+            key={d}
+            className="flex items-start gap-2.5 text-[12.5px] leading-relaxed text-slate-muted"
+          >
+            <span className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-cyan-glow shadow-[0_0_6px_rgba(79,195,255,0.8)]" />
+            {d}
+          </li>
+        ))}
+      </ul>
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-16 -bottom-16 h-40 w-40 rounded-full bg-cyan-glow/10 blur-[70px] opacity-60 transition-opacity group-hover:opacity-100"
+      />
     </div>
   );
 }

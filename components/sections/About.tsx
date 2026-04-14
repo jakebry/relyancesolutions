@@ -60,7 +60,7 @@ export function About() {
           </div>
         </div>
 
-        <div className="mt-20 grid grid-cols-1 gap-10 md:grid-cols-2">
+        <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2">
           {team.map((person, i) => (
             <motion.div
               key={person.name}
@@ -72,25 +72,25 @@ export function About() {
                 duration: 0.8,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="group relative"
+              className="group relative flex items-start gap-5 rounded-xl border border-ink/15 bg-gradient-to-br from-ink/[0.04] to-transparent p-5 transition-colors hover:border-ink/30"
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-ink/15 bg-gradient-to-br from-ink/5 to-transparent">
+              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-ink/15 bg-ink/[0.03]">
                 <CircuitAvatar initials={person.initials} />
-                <div className="absolute inset-x-0 bottom-0 p-8">
-                  <div className="mono mb-2 text-[10px] tracking-[0.2em] text-ink/60">
-                    Co-Founder · 0{i + 1}
-                  </div>
-                  <h3 className="serif text-3xl font-semibold leading-tight text-ink md:text-4xl">
-                    {person.name}
-                  </h3>
-                  <div className="mono mt-2 text-[11px] text-ink/70">
-                    {person.role}
-                  </div>
-                </div>
               </div>
-              <p className="mt-6 max-w-md text-base leading-relaxed text-ink/75">
-                {person.bio}
-              </p>
+              <div className="min-w-0 flex-1 pt-1">
+                <div className="mono text-[10px] tracking-[0.2em] text-ink/60">
+                  Co-Founder · {(i + 1).toString().padStart(2, "0")}
+                </div>
+                <h3 className="serif mt-2 text-2xl font-semibold leading-tight text-ink md:text-3xl">
+                  {person.name}
+                </h3>
+                <div className="mono mt-1.5 text-[10.5px] text-ink/70">
+                  {person.role}
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-ink/75">
+                  {person.bio}
+                </p>
+              </div>
             </motion.div>
           ))}
         </div>

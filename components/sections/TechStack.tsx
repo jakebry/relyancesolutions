@@ -18,6 +18,22 @@ function TechChip({ item }: { item: TechItem }) {
   );
 }
 
+function CategoryChip({ name }: { name: string }) {
+  return (
+    <motion.span
+      initial={{ opacity: 0, y: 8 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className="mono inline-flex items-center gap-2 rounded-full border border-cyan-glow/20 bg-white/[0.02] px-4 py-2 text-[11px] text-slate-muted transition-all duration-300 hover:-translate-y-px hover:border-cyan-glow/60 hover:bg-cyan-glow/10 hover:text-platinum hover:shadow-[0_0_16px_rgba(79,195,255,0.25)]"
+      data-cursor="hover"
+    >
+      <span className="h-1 w-1 rounded-full bg-cyan-glow/60" />
+      {name}
+    </motion.span>
+  );
+}
+
 export function TechStack() {
   const frontend = stack.filter((s) => s.category === "Frontend");
   const backend = stack.filter((s) => s.category === "Backend");
@@ -27,30 +43,30 @@ export function TechStack() {
       id="stack"
       className="relative overflow-hidden bg-void py-24 md:py-28"
     >
-      <div aria-hidden className="absolute inset-0 bg-grid opacity-[0.06]" />
+      <div aria-hidden className="absolute inset-0 bg-grid opacity-[0.05]" />
 
-      <div className="relative mx-auto max-w-7xl px-6 md:px-10">
-        <SectionLabel number="03" label="Stack" />
-        <div className="mt-8 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+      <div className="relative mx-auto max-w-6xl px-6 md:px-10">
+        <div className="flex flex-col items-center text-center">
+          <SectionLabel number="03" label="Stack" />
           <TextReveal
             as="h2"
             text="We speak every dialect of the internet."
-            className="display max-w-3xl text-balance text-5xl font-semibold leading-[0.95] tracking-tight text-platinum md:text-7xl"
+            className="display mt-8 max-w-4xl text-balance text-4xl font-semibold leading-[0.98] tracking-tight text-platinum md:text-6xl lg:text-7xl"
           />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="max-w-sm text-slate-muted"
+            className="mt-8 max-w-xl text-pretty text-base leading-relaxed text-slate-muted md:text-lg"
           >
-            React, Rust, Postgres, Vercel, and forty-something other friends.
-            We pick the right tool for your job — never the trendy one.
+            React, Rust, Postgres, Vercel, and forty-something other friends. We pick
+            the right tool for your job — never the trendy one.
           </motion.p>
         </div>
       </div>
 
-      <div className="relative mt-14 space-y-6">
+      <div className="relative mt-16 space-y-5">
         <Marquee
           items={frontend.map((t) => (
             <TechChip key={t.name} item={t} />
@@ -66,42 +82,44 @@ export function TechStack() {
         />
       </div>
 
-      <div className="relative mx-auto mt-20 max-w-7xl px-6 md:px-10">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
+      <div className="relative mx-auto mt-20 max-w-6xl px-6 md:px-10">
+        <div className="space-y-10">
           {stackCategories.map((cat, ci) => {
             const items = stack.filter((s) => s.category === cat);
             return (
               <motion.div
                 key={cat}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{
-                  delay: ci * 0.08,
-                  duration: 0.7,
+                  delay: ci * 0.05,
+                  duration: 0.6,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className="relative rounded-xl border border-cyan-glow/10 bg-gradient-to-b from-white/[0.03] to-transparent p-6"
+                className="relative border-t border-cyan-glow/10 pt-8"
               >
-                <div
-                  aria-hidden
-                  className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-glow/60 to-transparent"
-                />
-                <div className="mono mb-5 flex items-center justify-between text-[10px] text-slate-muted">
-                  <span className="text-cyan-glow">0{ci + 1}</span>
-                  <span>{cat}</span>
+                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between">
+                  <div className="flex items-baseline gap-4">
+                    <span className="mono text-[11px] text-cyan-glow">
+                      {(ci + 1).toString().padStart(2, "0")}
+                    </span>
+                    <h3 className="display text-2xl font-semibold tracking-tight text-platinum md:text-3xl">
+                      {cat}
+                    </h3>
+                  </div>
+                  <div className="mono flex items-center gap-3 text-[10px] text-slate-muted">
+                    <span className="h-px w-10 bg-cyan-glow/30" />
+                    <span>
+                      {items.length} {items.length === 1 ? "tool" : "tools"}
+                    </span>
+                  </div>
                 </div>
-                <ul className="space-y-2">
+                <div className="flex flex-wrap gap-2">
                   {items.map((item) => (
-                    <li
-                      key={item.name}
-                      className="flex items-center gap-2 text-sm text-slate-muted transition-colors hover:text-platinum"
-                    >
-                      <span className="h-px w-3 bg-cyan-glow/50" />
-                      {item.name}
-                    </li>
+                    <CategoryChip key={item.name} name={item.name} />
                   ))}
-                </ul>
+                </div>
               </motion.div>
             );
           })}
