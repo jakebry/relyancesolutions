@@ -3,6 +3,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { useRef } from "react";
+import { useCapability } from "./CapabilityProvider";
 
 type Props = {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export function GlassCard({ children, className, tilt = true }: Props) {
+  const { capable } = useCapability();
   const ref = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0.5);
   const my = useMotionValue(0.5);
@@ -21,8 +23,10 @@ export function GlassCard({ children, className, tilt = true }: Props) {
   const spotX = useTransform(sx, (v) => `${v * 100}%`);
   const spotY = useTransform(sy, (v) => `${v * 100}%`);
 
+  const interactive = tilt && capable;
+
   function onMove(e: React.MouseEvent) {
-    if (!tilt) return;
+    if (!interactive) return;
     const el = ref.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
@@ -30,6 +34,7 @@ export function GlassCard({ children, className, tilt = true }: Props) {
     my.set((e.clientY - r.top) / r.height);
   }
   function onLeave() {
+    if (!interactive) return;
     mx.set(0.5);
     my.set(0.5);
   }
@@ -37,10 +42,10 @@ export function GlassCard({ children, className, tilt = true }: Props) {
   return (
     <motion.div
       ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
+      onMouseMove={interactive ? onMove : undefined}
+      onMouseLeave={interactive ? onLeave : undefined}
       style={
-        tilt
+        interactive
           ? {
               rotateX: rotX,
               rotateY: rotY,
@@ -56,14 +61,16 @@ export function GlassCard({ children, className, tilt = true }: Props) {
         className
       )}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          background:
-            "radial-gradient(520px circle at var(--spot-x,50%) var(--spot-y,50%), rgba(79,195,255,0.18), transparent 40%)",
-        }}
-      />
+      {interactive && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          style={{
+            background:
+              "radial-gradient(520px circle at var(--spot-x,50%) var(--spot-y,50%), rgba(79,195,255,0.18), transparent 40%)",
+          }}
+        />
+      )}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-glow/50 to-transparent opacity-60"

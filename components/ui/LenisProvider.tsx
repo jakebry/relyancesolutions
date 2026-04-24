@@ -4,22 +4,24 @@ import Lenis from "lenis";
 import { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useCapability } from "./CapabilityProvider";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
 export function LenisProvider({ children }: { children: React.ReactNode }) {
+  const { capable, ready } = useCapability();
+
   useEffect(() => {
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    if (!ready) return;
+    if (!capable) return; // low-capability devices use native scroll
 
     const lenis = new Lenis({
-      lerp: prefersReduced ? 1 : 0.16,
+      lerp: 0.16,
       duration: 0.9,
       wheelMultiplier: 1.05,
-      smoothWheel: !prefersReduced,
+      smoothWheel: true,
       syncTouch: false,
     });
 
@@ -40,7 +42,7 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
       gsap.ticker.remove(tickerCallback);
       lenis.destroy();
     };
-  }, []);
+  }, [capable, ready]);
 
   return <>{children}</>;
 }

@@ -72,16 +72,16 @@ export function About() {
                 duration: 0.8,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="group relative flex items-start gap-5 rounded-xl border border-ink/15 bg-gradient-to-br from-ink/[0.04] to-transparent p-5 transition-colors hover:border-ink/30"
+              className="group relative flex items-start gap-4 rounded-xl border border-ink/15 bg-gradient-to-br from-ink/[0.04] to-transparent p-4 transition-colors hover:border-ink/30 sm:gap-5 sm:p-5"
             >
-              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-ink/15 bg-ink/[0.03]">
+              <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-lg border border-ink/15 bg-ink/[0.03] sm:h-24 sm:w-24">
                 <CircuitAvatar initials={person.initials} />
               </div>
               <div className="min-w-0 flex-1 pt-1">
                 <div className="mono text-[10px] tracking-[0.2em] text-ink/60">
                   Co-Founder · {(i + 1).toString().padStart(2, "0")}
                 </div>
-                <h3 className="serif mt-2 text-2xl font-semibold leading-tight text-ink md:text-3xl">
+                <h3 className="serif mt-2 text-xl font-semibold leading-tight text-ink sm:text-2xl md:text-3xl">
                   {person.name}
                 </h3>
                 <div className="mono mt-1.5 text-[10.5px] text-ink/70">

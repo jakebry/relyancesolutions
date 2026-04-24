@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono, Fraunces } from "next/font/google";
 import "./globals.css";
 import { LenisProvider } from "@/components/ui/LenisProvider";
+import { CapabilityProvider } from "@/components/ui/CapabilityProvider";
 import { Cursor } from "@/components/ui/Cursor";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -31,6 +32,13 @@ const fraunces = Fraunces({
   axes: ["SOFT", "opsz"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#05070e",
+};
+
 export const metadata: Metadata = {
   title: "Relyance Solutions — We build the web. You run your business.",
   description:
@@ -53,12 +61,14 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrains.variable} ${fraunces.variable}`}
     >
       <body>
-        <LenisProvider>
-          <Cursor />
-          <Navbar />
-          {children}
-          <Footer />
-        </LenisProvider>
+        <CapabilityProvider>
+          <LenisProvider>
+            <Cursor />
+            <Navbar />
+            {children}
+            <Footer />
+          </LenisProvider>
+        </CapabilityProvider>
       </body>
     </html>
   );

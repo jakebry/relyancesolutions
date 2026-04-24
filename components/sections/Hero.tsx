@@ -39,7 +39,7 @@ export function Hero() {
           <span>Relyance Solutions</span>
         </motion.div>
 
-        <h1 className="display text-balance text-6xl font-semibold leading-[0.92] tracking-[-0.035em] text-platinum sm:text-7xl md:text-[7.5rem] lg:text-[9rem]">
+        <h1 className="display text-balance text-[2.75rem] font-semibold leading-[0.92] tracking-[-0.035em] text-platinum min-[380px]:text-6xl sm:text-7xl md:text-[7.5rem] lg:text-[9rem]">
           <SplitLine delay={0.1}>We build</SplitLine>
           <SplitLine delay={0.25}>
             the <span className="italic text-cyan-glow">web.</span>

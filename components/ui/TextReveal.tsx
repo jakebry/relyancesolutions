@@ -2,6 +2,7 @@
 
 import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/cn";
+import { useCapability } from "./CapabilityProvider";
 
 type Props = {
   text: string;
@@ -39,8 +40,25 @@ export function TextReveal({
   stagger = 0.03,
   once = true,
 }: Props) {
-  const words = text.split(" ");
+  const { capable } = useCapability();
   const MotionTag = motion[Tag] as typeof motion.h1;
+
+  if (!capable) {
+    // Low-capability devices: render as a single fade-in block, no stagger.
+    return (
+      <MotionTag
+        className={cn(className)}
+        initial={{ opacity: 0, y: 8 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once, margin: "-80px" }}
+        transition={{ delay, duration: 0.5 }}
+      >
+        {text}
+      </MotionTag>
+    );
+  }
+
+  const words = text.split(" ");
 
   return (
     <MotionTag
@@ -61,7 +79,7 @@ export function TextReveal({
         >
           <motion.span variants={child} className="inline-block">
             {word}
-            {wi < words.length - 1 && "\u00A0"}
+            {wi < words.length - 1 && " "}
           </motion.span>
         </span>
       ))}

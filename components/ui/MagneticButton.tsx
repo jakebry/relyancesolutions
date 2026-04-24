@@ -8,6 +8,7 @@ import {
 } from "framer-motion";
 import { useRef } from "react";
 import { cn } from "@/lib/cn";
+import { useCapability } from "./CapabilityProvider";
 
 type Props = {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ export function MagneticButton({
   className,
   type = "button",
 }: Props) {
+  const { capable } = useCapability();
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -35,6 +37,7 @@ export function MagneticButton({
   const txtY = useTransform(sy, (v) => v * 0.4);
 
   function handleMove(e: React.MouseEvent) {
+    if (!capable) return;
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -44,19 +47,21 @@ export function MagneticButton({
     y.set(relY * 0.25);
   }
   function handleLeave() {
+    if (!capable) return;
     x.set(0);
     y.set(0);
   }
 
   const classes = cn(
-    "relative inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-sm font-medium tracking-wide transition-colors will-change-transform",
+    "relative inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-sm font-medium tracking-wide transition-colors will-change-transform touch-manipulation",
+    "min-h-[44px]",
     variant === "primary"
       ? "bg-cyan-glow text-void hover:bg-platinum"
       : "border border-cyan-glow/40 bg-cyan-glow/5 text-platinum hover:bg-cyan-glow/10",
     className
   );
 
-  const content = (
+  const content = capable ? (
     <motion.div
       ref={ref}
       onMouseMove={handleMove}
@@ -64,10 +69,7 @@ export function MagneticButton({
       style={{ x: sx, y: sy }}
       className="inline-block"
     >
-      <motion.div
-        style={{ x: txtX, y: txtY }}
-        className={classes}
-      >
+      <motion.div style={{ x: txtX, y: txtY }} className={classes}>
         {variant === "primary" && (
           <span
             aria-hidden
@@ -77,6 +79,18 @@ export function MagneticButton({
         {children}
       </motion.div>
     </motion.div>
+  ) : (
+    <div className="inline-block">
+      <div className={classes}>
+        {variant === "primary" && (
+          <span
+            aria-hidden
+            className="absolute inset-0 -z-10 rounded-full bg-cyan-glow blur-2xl opacity-40"
+          />
+        )}
+        {children}
+      </div>
+    </div>
   );
 
   if (href) {
@@ -87,7 +101,12 @@ export function MagneticButton({
     );
   }
   return (
-    <button type={type} onClick={onClick} data-cursor="hover" className="inline-block">
+    <button
+      type={type}
+      onClick={onClick}
+      data-cursor="hover"
+      className="inline-block"
+    >
       {content}
     </button>
   );

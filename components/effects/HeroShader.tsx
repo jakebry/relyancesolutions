@@ -3,6 +3,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import { useCapability } from "@/components/ui/CapabilityProvider";
 
 const vert = /* glsl */ `
   varying vec2 vUv;
@@ -139,7 +140,23 @@ function ShaderPlane() {
   );
 }
 
+function StaticFallback() {
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-0"
+      style={{
+        background:
+          "radial-gradient(ellipse 90% 70% at 70% 30%, rgba(79,195,255,0.22), transparent 55%), " +
+          "radial-gradient(ellipse 80% 60% at 20% 80%, rgba(45,108,255,0.25), transparent 50%), " +
+          "linear-gradient(180deg, #05070e 0%, #0b1220 55%, #05070e 100%)",
+      }}
+    />
+  );
+}
+
 export function HeroShader() {
+  const { capable, ready } = useCapability();
   const wrapRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
 
@@ -153,6 +170,17 @@ export function HeroShader() {
     io.observe(el);
     return () => io.disconnect();
   }, []);
+
+  // Until capability is determined, render the cheap gradient. If we turn out
+  // to be capable, the Canvas mounts on the second frame — a small tradeoff
+  // for never shipping Three.js to a low-end device.
+  if (!ready || !capable) {
+    return (
+      <div ref={wrapRef} className="absolute inset-0">
+        <StaticFallback />
+      </div>
+    );
+  }
 
   return (
     <div ref={wrapRef} className="absolute inset-0">

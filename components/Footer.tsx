@@ -41,7 +41,15 @@ export function Footer() {
           </ul>
         </div>
         <div className="flex flex-col-reverse items-start justify-between gap-4 border-t border-cyan-glow/10 pt-8 text-[11px] text-slate-muted md:flex-row md:items-center">
-          <span className="mono">© {year} Relyance Solutions. All rights reserved.</span>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
+            <span className="mono">© {year} Relyance Solutions. All rights reserved.</span>
+            <a
+              href="mailto:sales@relyancesolutions.com"
+              className="mono text-slate-muted transition-colors hover:text-cyan-glow"
+            >
+              sales@relyancesolutions.com
+            </a>
+          </div>
           <span className="mono">Crafted pixel by pixel. Monitored 24/7.</span>
         </div>
       </div>

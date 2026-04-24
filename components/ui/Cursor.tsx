@@ -1,12 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useCapability } from "./CapabilityProvider";
+
+const INTERACTIVE_SELECTOR =
+  "a, button, [data-cursor='hover'], input, textarea, label";
 
 export function Cursor() {
+  const { capable } = useCapability();
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!capable) return; // touch/low-capability devices use native cursor
+
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
@@ -30,35 +37,43 @@ export function Cursor() {
       rafId = requestAnimationFrame(tick);
     }
 
-    function onEnter() {
-      ring!.classList.add("scale-[2.5]");
-      ring!.classList.add("bg-cyan-glow/20");
+    // Event delegation: captures elements that mount/unmount after first render
+    // (e.g., expanded Tech Stack chips, dynamically revealed cards).
+    function onPointerOver(e: Event) {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      if (target.closest(INTERACTIVE_SELECTOR)) {
+        ring!.classList.add("scale-[2.5]");
+        ring!.classList.add("bg-cyan-glow/20");
+      }
     }
-    function onLeave() {
-      ring!.classList.remove("scale-[2.5]");
-      ring!.classList.remove("bg-cyan-glow/20");
+    function onPointerOut(e: Event) {
+      const target = e.target as HTMLElement | null;
+      const related = (e as PointerEvent).relatedTarget as HTMLElement | null;
+      if (!target) return;
+      // Only shrink when truly leaving an interactive element
+      const leavingInteractive = target.closest(INTERACTIVE_SELECTOR);
+      const enteringInteractive = related?.closest(INTERACTIVE_SELECTOR);
+      if (leavingInteractive && !enteringInteractive) {
+        ring!.classList.remove("scale-[2.5]");
+        ring!.classList.remove("bg-cyan-glow/20");
+      }
     }
 
     window.addEventListener("mousemove", onMove);
+    document.addEventListener("pointerover", onPointerOver);
+    document.addEventListener("pointerout", onPointerOut);
     tick();
-
-    const interactive = document.querySelectorAll<HTMLElement>(
-      "a, button, [data-cursor='hover'], input, textarea, label"
-    );
-    interactive.forEach((el) => {
-      el.addEventListener("mouseenter", onEnter);
-      el.addEventListener("mouseleave", onLeave);
-    });
 
     return () => {
       window.removeEventListener("mousemove", onMove);
+      document.removeEventListener("pointerover", onPointerOver);
+      document.removeEventListener("pointerout", onPointerOut);
       cancelAnimationFrame(rafId);
-      interactive.forEach((el) => {
-        el.removeEventListener("mouseenter", onEnter);
-        el.removeEventListener("mouseleave", onLeave);
-      });
     };
-  }, []);
+  }, [capable]);
+
+  if (!capable) return null;
 
   return (
     <>

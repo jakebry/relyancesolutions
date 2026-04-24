@@ -44,7 +44,7 @@ export function Navbar() {
             : "opacity-0"
         )}
       />
-      <nav className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-5 md:px-10">
+      <nav className="relative z-50 mx-auto flex max-w-7xl items-center justify-between px-6 py-5 md:px-10">
         <a
           href="#top"
           className="flex items-center gap-3"
@@ -106,9 +106,9 @@ export function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-void/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-0 z-40 flex flex-col bg-void/95 px-6 backdrop-blur-xl md:hidden"
           >
-            <ul className="mt-28 flex flex-col items-center gap-8">
+            <ul className="mt-28 flex flex-col items-center gap-7">
               {links.map((l, i) => (
                 <motion.li
                   key={l.href}
@@ -126,6 +126,28 @@ export function Navbar() {
                 </motion.li>
               ))}
             </ul>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: links.length * 0.06 + 0.05 }}
+              className="mt-auto mb-12 flex flex-col items-center gap-5"
+            >
+              <a
+                href="#contact"
+                onClick={() => setOpen(false)}
+                className="mono inline-flex min-h-[52px] items-center justify-center rounded-full bg-cyan-glow px-8 py-3 text-[12px] font-medium text-void touch-manipulation"
+              >
+                Start Your Site
+              </a>
+              <a
+                href="mailto:sales@relyancesolutions.com"
+                onClick={() => setOpen(false)}
+                className="mono text-[11px] text-slate-muted transition-colors hover:text-cyan-glow"
+              >
+                sales@relyancesolutions.com
+              </a>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
