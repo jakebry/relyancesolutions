@@ -13,9 +13,9 @@ export const team: TeamMember[] = [
     initials: "JB",
   },
   {
-    name: "Cameron Reehl",
+    name: "Cam Reehl",
     role: "Co-Founder, Sales & Client Relations",
-    bio: "Cameron is the first voice you hear and the last person you need to chase. He translates business into tech, and makes sure every client feels handled from day one.",
+    bio: "Cam is the first voice you hear and the last person you need to chase. He translates business into tech, and makes sure every client feels handled from day one.",
     initials: "CR",
   },
 ];

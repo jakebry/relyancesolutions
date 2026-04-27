@@ -174,7 +174,7 @@ export function Contact() {
                       Signal received.
                     </h3>
                     <p className="mt-4 max-w-md text-slate-muted">
-                      Thanks for reaching out. Jake or Cameron will get back to
+                      Thanks for reaching out. Jake or Cam will get back to
                       you within one business day.
                     </p>
                     <button
