@@ -1,7 +1,7 @@
 # Relyance Solutions — Landing Page Design
 
 **Date:** 2026-04-14
-**Owners:** Jake Bryan, Cameron Reehl
+**Owners:** Jake Bryan, Cam Reehl
 **Status:** Approved — implementation in progress
 
 ## Goal
@@ -106,7 +106,7 @@ The flex section. 40+ tech logos in two counter-scrolling marquees (frontend row
 Switches to `cream` background with `ink` text. Fraunces serif. Massive pull quote at top: *"We take care of the web so you can take care of everything else."* Two profile cards side-by-side:
 
 - **Jake Bryan** — Co-Founder & Lead Developer
-- **Cameron Reehl** — Co-Founder, Sales & Client Relations
+- **Cam Reehl** — Co-Founder, Sales & Client Relations
 
 Avatars: stylized circuit-silhouette SVGs (glowing outline of a head/shoulders with circuit traces, matching the logo). Placeholder bios I'll write, easy to swap later.
 

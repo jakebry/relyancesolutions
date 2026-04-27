@@ -158,6 +158,6 @@ The contact form is frontend-only — it validates, shows success state, and `co
 ## Team
 
 - **Jake Bryan** — Co-Founder & Lead Developer
-- **Cameron Reehl** — Co-Founder, Sales & Client Relations
+- **Cam Reehl** — Co-Founder, Sales & Client Relations
 
 Built with a lot of care and an unreasonable amount of keyframes.
