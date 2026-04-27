@@ -5,11 +5,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useCapability } from "@/components/ui/CapabilityProvider";
 
+// Render the 2x2 plane directly in clip space so the shader always fills
+// the canvas. With the default perspective camera the plane stops covering
+// the viewport above ~1.30 aspect, leaving black bars on wide screens.
 const vert = /* glsl */ `
   varying vec2 vUv;
   void main() {
     vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_Position = vec4(position, 1.0);
   }
 `;
 
