@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { LogoMark } from "./LogoMark";
+import Image from "next/image";
 import { cn } from "@/lib/cn";
 
 const links = [
@@ -50,11 +50,14 @@ export function Navbar() {
           className="flex items-center gap-3"
           data-cursor="hover"
         >
-          <LogoMark className="h-9 w-9" animated />
-          <span className="display text-lg font-semibold tracking-tight text-platinum">
-            Relyance
-            <span className="text-cyan-glow">.</span>
-          </span>
+          <Image
+            src="/logo.png"
+            alt="Relyance Solutions"
+            width={36}
+            height={36}
+            className="h-9 w-9 object-contain"
+            priority
+          />
         </a>
 
         <ul className="hidden items-center gap-10 md:flex">
